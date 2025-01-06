@@ -1,101 +1,172 @@
-import Image from "next/image";
+"use client";
+import { useState, useEffect } from "react";
+import EditModal from "./components/EditModal";
+import Checkbox from "./components/Checkbox";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [tasks, setTasks] = useState<string[]>(
+    []
+  );
+  const [filter, setFilter] = useState<string[]>(
+    []
+  );
+  const [filterType, setFilterType] =
+    useState<string>("all");
+  const [completed, setCompleted] = useState<
+    string[]
+  >([]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  useEffect(() => {
+    if (filterType === "completed") {
+        setFilter(completed);
+    } else { 
+        setFilter(tasks);
+    }
+}, [tasks, filterType]); 
+
+  const switchFilterCompleted = () => {
+    setFilterType("completed");
+    console.log("complter")
+  };
+  const switchFilterAll = () => {
+    setFilterType("all");
+    console.log("all")
+
+    
+  };
+
+  const [editingIndex, setEditingIndex] =
+    useState<number>(-1);
+  const [editTask, setEditTask] =
+    useState<boolean>(false);
+
+  let newTask: string[] = [];
+  const handleAddTask = (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    const form = e.target as HTMLFormElement;
+    const input = form
+      .children[0] as HTMLInputElement;
+    e.preventDefault();
+    newTask = [...tasks, input.value];
+    setTasks(newTask);
+    form.reset();
+  };
+
+  const handleEditTask = (task: string) => {
+    setEditTask(true);
+    setEditingIndex(tasks.indexOf(task));
+  };
+
+  const handleSaveTask = (task: string) => {
+    const updatedTasks = [...tasks];
+    updatedTasks[editingIndex] = task;
+    setTasks(updatedTasks);
+    setEditTask(false);
+  };
+
+  const handleChecked = (task: string) => {
+    const compTask = tasks.filter(
+      (t) => t === task
+    );
+    const totalCompTasks = [
+      ...completed,
+      ...compTask,
+    ];
+    setCompleted(totalCompTasks);
+    newTask = tasks.filter((t) => t !== task);
+    setTasks(newTask);
+  };
+
+  return (
+    <div className="App flex flex-col gap-5 items-center p-10 bg-[#0ea4e9a1] h-screen text-white">
+      <h1 className="text-3xl font-bold font-serif">
+        To-do-app
+      </h1>
+      <div className="flex flex-col items-center relative p-10 pt-5 shadow-lg shadow-black bg-sky-500 rounded-lg">
+        <div
+          className="flex flex-row text-xl
+        justify-start gap-1 w-full"
+        >
+          <button
+            className=" hover:underline no-underline p-1 duration-150 "
+            onClick={switchFilterAll}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            {" "}
+            All
+          </button>
+          <button
+            className=" hover:underline no-underline p-1 duration-150"
+            onClick={switchFilterCompleted}
           >
-            Read our docs
-          </a>
+            Completed
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <form
+          className="flex gap-2 w-full"
+          onSubmit={handleAddTask}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+          <input
+            type="text"
+            className="p-2 px-4 capitalize w-[80%] rounded-lg focus:outline-none  text-sky-500 "
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <button
+            className="px-4 p-2 rounded-lg bg-slate-600 focus:outline-none "
+            type="submit"
+          >
+            Add
+          </button>
+        </form>
+        <div className="tasks flex flex-col justify-between  w-full items-center gap-2 mt-5">
+          {filter.map((task, index: number) => (
+            <div
+              key={task + index}
+              className="flex items-center gap-2 "
+            >
+              <Checkbox
+                handleChecked={handleChecked}
+                index={index}
+                tasks={tasks}
+                task={task}
+              />
+              <h1 className="w-fit min-w-[180px] uppercase font-semibold">
+                {task}
+              </h1>
+              <button
+                className="px-4 p-2 rounded-lg bg-slate-600 focus:outline-none"
+                onClick={() => {
+                  console.log(tasks);
+                  newTask = tasks.filter(
+                    (t: string) => t !== task
+                  );
+                  setTasks(newTask);
+                }}
+              >
+                Delete
+              </button>
+              <button
+                className="px-4 p-2 rounded-lg bg-slate-600 focus:outline-none"
+                onClick={() => {
+                  handleEditTask(task);
+                }}
+              >
+                Edit
+              </button>
+              <div>
+                {editTask && (
+                  <EditModal
+                    task={task}
+                    handleSaveTask={
+                      handleSaveTask
+                    }
+                    setEditTask={setEditTask}
+                  />
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
