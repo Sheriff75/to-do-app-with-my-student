@@ -125,7 +125,7 @@ export default function Home() {
             onChange={(e) => setInputValue(e.target.value)}
             type="text"
             sx ={{backgroundColor: 'white', margin: '0', width: {md: '90%', xs: '100%'}, padding: '4px', px: '6px', textTransform: 'capitalize', borderRadius: '10px', fontSize: {xs: '14px', md: '20px'}, color: 'black'}}
-            className=" focus:outline-none text-sky-500 "
+            className=" focus:outline-none"
           />
           <button
             className="px-4 p-2 rounded-lg bg-slate-600 focus:outline-none text-[13px] md:text-[16px] w-[100px]"
