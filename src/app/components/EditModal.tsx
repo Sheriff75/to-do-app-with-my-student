@@ -1,11 +1,17 @@
 import React,{useState} from "react";
 
-interface EditModalProps {
-  task: string;
+
+type Task = {
+  id: number;
+  title: string;
+  completed: boolean;
+  }
+  interface EditModalProps {
+  task: Task
   setEditTask: React.Dispatch<
     React.SetStateAction<boolean>
   >;
-  handleSaveTask: (task: string) => void;
+  handleSaveTask: (task: Task) => void;
 }
 
 
@@ -15,7 +21,8 @@ const EditModal: React.FC<EditModalProps> = ({
   setEditTask
 }) => {
 
-  const [editedTask, setEditedTask] = useState<string>(
+
+  const [editedTask, setEditedTask] = useState<Task>(
     task
   );
 
@@ -31,10 +38,10 @@ const EditModal: React.FC<EditModalProps> = ({
     >
       <input
         type="text"
-        placeholder={task}
-        onFocus={(e)=> e.target.value = task}
+        placeholder={task.title}
+        onFocus={(e) => e.target.value = task.title}
         onChange={(e) => {
-          setEditedTask(e.target.value);
+          setEditedTask(prev => ({ ...prev, title: e.target.value }));
         }}
         className="p-2 px-4 capitalize placeholder:text-sky-500 w-[80%]
          rounded-lg border-2 bg-slate-50  text-sky-500"

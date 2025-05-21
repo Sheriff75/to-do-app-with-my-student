@@ -1,38 +1,17 @@
-import React, { useState } from "react";
-import { FaCheck } from "react-icons/fa";
+import React from 'react';
 
-interface checkboxProps {
-  handleChecked: (task: string) => void;
-  task: string;
-  index: number;
-  tasks: string[];
-}
-
-const Checkbox: React.FC<checkboxProps> = ({
-  index,
-  handleChecked,
-  task,
-  tasks,
-}) => {
-  const [checked, setChecked] =
-    useState<boolean>(false);
-
-  return (
-    <div
-      className="flex items-center gap-2 text-sky-500 bg-white h-6 w-6 p-1 rounded-full"
-      onClick={() => {
-        handleChecked(task);
-        setChecked(!checked);
-      }}
-    >
-      {checked &&
-      tasks.indexOf(task) === index ? (
-        <FaCheck />
-      ) : (
-        " "
-      )}
-    </div>
-  );
+type Task = {
+  id: number;
+  title: string;
+  completed: boolean;
 };
 
-export default Checkbox;
+export default function Checkbox({ task, handleChecked }: { task: Task, handleChecked: (task: Task) => void }) {
+  return (
+    <input
+      type="checkbox"
+      checked={task.completed}
+      onChange={() => handleChecked(task)}
+    />
+  );
+}
